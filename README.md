@@ -166,14 +166,13 @@ AXI Slave 내부 Register Map을 통해 SPI와 I2C의 제어 명령, 송신 데�
 
 | 구분 | 내용 |
 | --- | --- |
-| 문제 | I2C 수신 시 값이 누락되거나 이전 통신의 쓰레기값이 읽히는 현상 발생 |
-| 원인 | AXI 버스와 I2C 물리 통신의 처리 속도 차이로 인해 통신 완료 전 RX Register에 접근 |
-| 분석 | 시뮬레이션 파형에서 `Busy=1`, `Done=0`인 상태에서 Read가 수행되는 것을 확인 |
-| 해결 | 상태 Register의 Done bit를 Polling 방식으로 지속 확인 |
-| 결과 | 하드웨어 Transaction 완료 후 RX Register에 접근하여 수신 안정성 확보 |
+| 문제 | I2C 수신 시 값이 누락되거나 이전 통신의 값이 읽히는 현상 발생 |
+| 원인 | 통신 완료 전 RX Register에 접근 |
+| 해결 | Status Register의 Done bit를 Polling 방식으로 확인 |
+| 결과 | 하드웨어 Transaction 완료 후 데이터를 읽어 수신 안정성 확보 |
 
 <p align="center">
-  <img src="images/i2c_waveform.png" width="850">
+  <img src="images/i2c_troubleshooting_waveform.png" width="850">
 </p>
 
 <p align="center">
@@ -229,14 +228,32 @@ Failed             : 0
 ```
 
 1000개의 무작위 Transaction에 대해 Master 송신 데이터와 Slave 수신 데이터를  
-Scoreboard에서 비교했으며, 모든 Transaction이 정상적으로 일치함을 확인했습니다.
+Scoreboard로 비교한 결과, 모든 Transaction이 정상적으로 일치했습니다.
 
-### Board-to-Board 검증
+---
 
-- FPGA 보드 2대를 Master와 Slave로 구성
+### I2C 정상 수신 결과
+
+<p align="center">
+  <img src="images/i2c_rx_waveform.png" width="850">
+</p>
+
+<p align="center">
+  <b>Polling 동기화 적용 후 I2C 정상 수신 파형</b>
+</p>
+
+Status Register의 Done bit를 Polling 방식으로 확인한 뒤 RX Register에 접근하도록 수정했습니다.  
+그 결과 수신 데이터 누락 없이 정상적으로 데이터가 전달되는 것을 확인했습니다.
+
+---
+
+### Board-to-Board 통신 검증
+
+- FPGA 보드 2대를 각각 Master와 Slave로 구성
 - SPI 데이터 송수신 정상 동작 확인
 - I2C 데이터 송수신 정상 동작 확인
-- 수신 데이터 누락 문제 해결 후 반복 통신 안정성 확인
+- 송신 데이터와 수신 데이터의 일치 여부 확인
+- 반복 통신 환경에서 안정적인 데이터 전달 확인
 ---
 
 ## 📂 프로젝트 구조
