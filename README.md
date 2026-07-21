@@ -91,7 +91,7 @@ Register Map에 저장된 제어값은 SPI 또는 I2C Master IP로 전달되며,
 Master IP가 실제 통신 신호를 생성해 상대 FPGA 보드의 Slave 모듈과 데이터를 송수신합니다.
 
 <p align="center">
-  <img src="images/axi_system_block_diagram.png" width="850">
+  <img src="images/axi_system_block_diagram.png" width="600">
 </p>
 
 <p align="center">
