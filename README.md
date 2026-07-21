@@ -172,7 +172,7 @@ AXI Slave 내부 Register Map을 통해 SPI와 I2C의 제어 명령, 송신 데�
 | 결과 | 하드웨어 Transaction 완료 후 데이터를 읽어 수신 안정성 확보 |
 
 <p align="center">
-  <img src="images/i2c_troubleshooting_waveform.png" width="850">
+  <img src="images/i2c_troubleshooting_waveform.png" width="500">
 </p>
 
 <p align="center">
