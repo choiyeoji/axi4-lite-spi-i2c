@@ -313,6 +313,6 @@ RTL 설계, 소프트웨어 제어, 버스 인터페이스, 실제 하드웨어 
 
 <p align="center">
   <a href="docs/260508_axi_spi_i2c.pdf">
-    <img src="https://img.shields.io/badge/PDF-프로젝트%20발표%20자료-red?style=for-the-badge&logo=adobeacrobatreader">
+    <b>📑 프로젝트 발표 자료 보기</b>
   </a>
 </p>
