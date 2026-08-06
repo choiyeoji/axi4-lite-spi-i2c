@@ -258,35 +258,41 @@ Status Register의 Done bit를 Polling 방식으로 확인한 뒤 RX Register에
 
 ## 📂 프로젝트 구조
 
+AXI4-Lite 기반 SPI 및 I2C RTL, 테스트벤치, MicroBlaze 소프트웨어와 FPGA 제약조건은 `src` 폴더에 정리했습니다.
+
 ```text
-axi4-lite-spi-i2c/
-├── README.md
-├── rtl/
-│   ├── axi_master/
-│   ├── axi_slave/
-│   ├── spi/
-│   │   ├── spi_master.sv
-│   │   └── spi_slave.sv
-│   └── i2c/
-│       ├── i2c_master.sv
-│       └── i2c_slave.sv
-├── verification/
-│   ├── spi_uvm/
-│   ├── testbench/
-│   └── simulation/
-├── software/
-│   ├── application/
-│   ├── driver/
-│   └── hal/
-├── constraints/
+.
+├── src/
+│   ├── rtl/
+│   │   ├── spi/
+│   │   │   ├── axi/
+│   │   │   │   ├── SPI_v1_0.v
+│   │   │   │   └── SPI_v1_0_S00_AXI.v
+│   │   │   ├── spi_master.sv
+│   │   │   ├── spi_slave.sv
+│   │   │   └── spi_slave_top.sv
+│   │   └── i2c/
+│   │       ├── axi/
+│   │       │   ├── I2C_v1_0.v
+│   │       │   └── I2C_v1_0_S00_AXI.v
+│   │       ├── i2c_master.sv
+│   │       └── top_i2c_slave.sv
+│   ├── sim/
+│   │   ├── spi/
+│   │   │   ├── tb_axi_spi_rtl.sv
+│   │   │   └── tb_axi_spi_full_rtl.sv
+│   │   └── i2c/
+│   │       ├── tb_axi_i2c_rtl.sv
+│   │       └── tb_axi_i2c_full_rtl.sv
+│   ├── software/
+│   │   ├── spi/
+│   │   └── i2c/
+│   └── constraints/
+│       ├── spi_basys3.xdc
+│       └── i2c_basys3.xdc
+├── docs/
 ├── images/
-│   ├── system_block_diagram.png
-│   ├── spi_axi_bridge.png
-│   ├── i2c_axi_bridge.png
-│   ├── spi_uvm_result.png
-│   └── i2c_waveform.png
-└── docs/
-    └── axi_spi_i2c_presentation.pdf
+└── README.md
 ```
 
 > 실제 프로젝트 파일 구성에 맞게 폴더명과 파일명은 수정할 예정입니다.
