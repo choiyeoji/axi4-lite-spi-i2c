@@ -247,55 +247,123 @@ Status Register의 Done bit를 Polling 방식으로 확인한 뒤 RX Register에
 
 ---
 
-### Board-to-Board 통신 검증
+### Board-to-Board 양방향 통신 검증
 
 - FPGA 보드 2대를 각각 Master와 Slave로 구성
-- SPI 데이터 송수신 정상 동작 확인
-- I2C 데이터 송수신 정상 동작 확인
-- 송신 데이터와 수신 데이터의 일치 여부 확인
+- SPI의 MOSI/MISO를 이용한 양방향 데이터 송수신 검증
+- I2C Master Write 및 Master Read 동작 검증
+- Master에서 Slave로 전달된 데이터 확인
+- Slave에서 Master로 반환된 응답 데이터 확인
+- 각 보드의 송신 데이터와 수신 데이터 일치 여부 확인
 - 반복 통신 환경에서 안정적인 데이터 전달 확인
+  
 ---
+
+## 🎥 시연 영상
+
+### SPI 양방향 Board-to-Board 통신
+
+FPGA 보드 2대를 SPI Master와 Slave로 구성하여 양방향 데이터 통신을 검증했습니다.
+
+Master가 MOSI를 통해 Slave로 데이터를 전송하고,  
+Slave는 MISO를 통해 응답 데이터를 Master로 반환합니다.  
+각 보드의 출력 장치를 통해 송신 데이터와 수신 데이터가 일치하는지 확인했습니다.
+
+https://github.com/user-attachments/assets/https://github.com/user-attachments/assets/2ad1a2e3-ec8b-465f-a355-9dd903ed0ff9
+
+### I2C 양방향 Board-to-Board 통신
+
+FPGA 보드 2대를 I2C Master와 Slave로 구성하여  
+Master Write와 Master Read를 이용한 양방향 데이터 통신을 검증했습니다.
+
+Master Write 과정에서는 Master의 데이터를 Slave로 전달하고,  
+Master Read 과정에서는 Slave의 데이터를 Master가 읽어옵니다.  
+각 보드의 출력 장치를 통해 양방향으로 전달된 데이터가 일치하는지 확인했습니다.
+
+https://github.com/user-attachments/assets/https://github.com/user-attachments/assets/92001c28-2abe-4adc-a710-84242fc8d082
+
+---
+
 
 ## 📂 프로젝트 구조
 
-AXI4-Lite 기반 SPI 및 I2C RTL, 테스트벤치, MicroBlaze 소프트웨어와 FPGA 제약조건은 `src` 폴더에 정리했습니다.
+SPI와 I2C를 각각 독립적으로 구분하고, 내부에서 RTL, 시뮬레이션, MicroBlaze 소프트웨어 및 FPGA 제약조건을 관리하도록 구성했습니다.
 
 ```text
 .
 ├── src/
-│   ├── rtl/
-│   │   ├── spi/
-│   │   │   ├── axi/
+│   ├── spi/
+│   │   ├── rtl/
+│   │   │   ├── master/
 │   │   │   │   ├── SPI_v1_0.v
-│   │   │   │   └── SPI_v1_0_S00_AXI.v
-│   │   │   ├── spi_master.sv
-│   │   │   ├── spi_slave.sv
-│   │   │   └── spi_slave_top.sv
-│   │   └── i2c/
-│   │       ├── axi/
-│   │       │   ├── I2C_v1_0.v
-│   │       │   └── I2C_v1_0_S00_AXI.v
-│   │       ├── i2c_master.sv
-│   │       └── top_i2c_slave.sv
-│   ├── sim/
-│   │   ├── spi/
+│   │   │   │   ├── SPI_v1_0_S00_AXI.v
+│   │   │   │   └── spi_master.sv
+│   │   │   └── slave/
+│   │   │       ├── spi_slave.sv
+│   │   │       └── spi_slave_top.sv
+│   │   ├── sim/
 │   │   │   ├── tb_axi_spi_rtl.sv
 │   │   │   └── tb_axi_spi_full_rtl.sv
-│   │   └── i2c/
-│   │       ├── tb_axi_i2c_rtl.sv
-│   │       └── tb_axi_i2c_full_rtl.sv
-│   ├── software/
-│   │   ├── spi/
-│   │   └── i2c/
-│   └── constraints/
-│       ├── spi_basys3.xdc
-│       └── i2c_basys3.xdc
-├── docs/
+│   │   ├── software/
+│   │   │   ├── ap/
+│   │   │   ├── common/
+│   │   │   ├── driver/
+│   │   │   ├── HAL/
+│   │   │   ├── main.c
+│   │   │   └── lscript.ld
+│   │   └── constraints/
+│   │       └── spi_master_basys3.xdc
+│   │       └── spi_slave_basys3.xdc
+│   │
+│   └── i2c/
+│       ├── rtl/
+│       │   ├── master/
+│       │   │   ├── axi/
+│       │   │   │   ├── axi_i2c_v1_0.v
+│       │   │   │   └── axi_i2c_v1_0_S00_AXI.v
+│       │   │   └── standalone/
+│       │   │       └── i2c_master.sv
+│       │   ├── slave/
+│       │   │   ├── i2c_slave.sv
+│       │   │   └── i2c_slave_led.sv
+│       │   └── integration/
+│       │       ├── i2c_top.sv
+│       │       └── i2c_demo_top.sv
+│       ├── sim/
+│       │   └── tb_i2c_top.sv
+│       ├── software/
+│       │   ├── ap/
+│       │   ├── common/
+│       │   ├── driver/
+│       │   ├── HAL/
+│       │   ├── main.c
+│       │   └── lscript.ld
+│       └── constraints/
+│           ├── i2c_master_basys3.xdc
+│           └── i2c_slave_basys3.xdc
+│
 ├── images/
+│   ├── axi_system_block_diagram.png
+│   ├── spi_axi_bridge.png
+│   ├── i2c_axi_bridge.png
+│   ├── i2c_troubleshooting_waveform.png
+│   ├── spi_uvm_result.png
+│   └── i2c_rx_waveform.png
+├── docs/
+│   └── 260508_axi_spi_i2c.pdf
 └── README.md
 ```
 
-> 실제 프로젝트 파일 구성에 맞게 폴더명과 파일명은 수정할 예정입니다.
+### 소스 구분
+
+- `spi/rtl/master`: AXI4-Lite SPI IP와 SPI Master
+- `spi/rtl/slave`: SPI Slave 및 Slave 래퍼
+- `i2c/rtl/master/axi`: MicroBlaze 시스템에서 사용하는 AXI4-Lite I2C Master IP
+- `i2c/rtl/master/standalone`: AXI 없이 검증하는 독립형 I2C Master
+- `i2c/rtl/slave`: 독립형 I2C Slave와 실제 Slave 보드 최상위 모듈
+- `i2c/rtl/integration`: I2C Master–Slave 통합 및 보드 시연 모듈
+- `software`: MicroBlaze에서 주변장치를 제어하는 C 소프트웨어
+- `constraints`: Master 및 Slave FPGA 보드의 핀 할당
 
 ---
 
