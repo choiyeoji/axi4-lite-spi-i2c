@@ -298,85 +298,81 @@ FPGA 보드 2대를 각각 Master와 Slave로 구성하여 SPI와 I2C의 양방�
 - 
 ---
 
-## 📂 프로젝트 구조
+## 📂 소스코드 구조
 
 SPI와 I2C를 각각 독립적으로 구분하고, 내부에서 RTL, 시뮬레이션, MicroBlaze 소프트웨어 및 FPGA 제약조건을 관리하도록 구성했습니다.
 
 ```text
-.
-├── src/
-│   ├── spi/
-│   │   ├── rtl/
-│   │   │   ├── master/
-│   │   │   │   ├── SPI_v1_0.v
-│   │   │   │   ├── SPI_v1_0_S00_AXI.v
-│   │   │   │   └── spi_master.sv
-│   │   │   └── slave/
-│   │   │       ├── spi_slave.sv
-│   │   │       └── spi_slave_top.sv
-│   │   ├── sim/
-│   │   │   ├── tb_axi_spi_rtl.sv
-│   │   │   └── tb_axi_spi_full_rtl.sv
-│   │   ├── software/
-│   │   │   ├── ap/
-│   │   │   ├── common/
-│   │   │   ├── driver/
-│   │   │   ├── HAL/
-│   │   │   ├── main.c
-│   │   │   └── lscript.ld
-│   │   └── constraints/
-│   │       └── spi_master_basys3.xdc
-│   │       └── spi_slave_basys3.xdc
-│   │
-│   └── i2c/
-│       ├── rtl/
-│       │   ├── master/
-│       │   │   ├── axi/
-│       │   │   │   ├── axi_i2c_v1_0.v
-│       │   │   │   └── axi_i2c_v1_0_S00_AXI.v
-│       │   │   └── standalone/
-│       │   │       └── i2c_master.sv
-│       │   ├── slave/
-│       │   │   ├── i2c_slave.sv
-│       │   │   └── i2c_slave_led.sv
-│       │   └── integration/
-│       │       ├── i2c_top.sv
-│       │       └── i2c_demo_top.sv
-│       ├── sim/
-│       │   └── tb_i2c_top.sv
-│       ├── software/
-│       │   ├── ap/
-│       │   ├── common/
-│       │   ├── driver/
-│       │   ├── HAL/
-│       │   ├── main.c
-│       │   └── lscript.ld
-│       └── constraints/
-│           ├── i2c_master_basys3.xdc
-│           └── i2c_slave_basys3.xdc
+src/
+├── spi/
+│   ├── rtl/
+│   │   ├── master/
+│   │   │   ├── SPI_v1_0.v
+│   │   │   ├── SPI_v1_0_S00_AXI.v
+│   │   │   └── spi_master.sv
+│   │   └── slave/
+│   │       ├── spi_slave.sv
+│   │       └── spi_slave_top.sv
+│   ├── sim/
+│   │   ├── tb_axi_spi_rtl.sv
+│   │   └── tb_axi_spi_full_rtl.sv
+│   ├── software/
+│   │   ├── ap/
+│   │   ├── common/
+│   │   ├── driver/
+│   │   ├── HAL/
+│   │   ├── main.c
+│   │   └── lscript.ld
+│   └── constraints/
+│       ├── spi_master_basys3.xdc
+│       └── spi_slave_basys3.xdc
 │
-├── images/
-│   ├── axi_system_block_diagram.png
-│   ├── spi_axi_bridge.png
-│   ├── i2c_axi_bridge.png
-│   ├── i2c_troubleshooting_waveform.png
-│   ├── spi_uvm_result.png
-│   └── i2c_rx_waveform.png
-├── docs/
-│   └── 260508_axi_spi_i2c.pdf
-└── README.md
+└── i2c/
+    ├── rtl/
+    │   ├── master/
+    │   │   ├── axi/
+    │   │   │   ├── axi_i2c_v1_0.v
+    │   │   │   └── axi_i2c_v1_0_S00_AXI.v
+    │   │   └── standalone/
+    │   │       └── i2c_master.sv
+    │   ├── slave/
+    │   │   ├── i2c_slave.sv
+    │   │   └── i2c_slave_led.sv
+    │   └── integration/
+    │       ├── i2c_top.sv
+    │       └── i2c_demo_top.sv
+    ├── sim/
+    │   └── tb_i2c_top.sv
+    ├── software/
+    │   ├── ap/
+    │   ├── common/
+    │   ├── driver/
+    │   ├── HAL/
+    │   ├── main.c
+    │   └── lscript.ld
+    └── constraints/
+        ├── i2c_master_basys3.xdc
+        └── i2c_slave_basys3.xdc
 ```
 
-### 소스 구분
+### 폴더 설명
 
-- `spi/rtl/master`: AXI4-Lite SPI IP와 SPI Master
-- `spi/rtl/slave`: SPI Slave 및 Slave 래퍼
-- `i2c/rtl/master/axi`: MicroBlaze 시스템에서 사용하는 AXI4-Lite I2C Master IP
-- `i2c/rtl/master/standalone`: AXI 없이 검증하는 독립형 I2C Master
-- `i2c/rtl/slave`: 독립형 I2C Slave와 실제 Slave 보드 최상위 모듈
-- `i2c/rtl/integration`: I2C Master–Slave 통합 및 보드 시연 모듈
-- `software`: MicroBlaze에서 주변장치를 제어하는 C 소프트웨어
-- `constraints`: Master 및 Slave FPGA 보드의 핀 할당
+| 폴더 | 내용 |
+| --- | --- |
+| `spi/rtl/master` | AXI4-Lite SPI IP와 SPI Master RTL |
+| `spi/rtl/slave` | SPI Slave 및 Slave 보드 최상위 모듈 |
+| `spi/sim` | AXI4-Lite SPI 및 Master–Slave 통신 Testbench |
+| `spi/software` | MicroBlaze에서 SPI IP를 제어하는 C 소프트웨어 |
+| `spi/constraints` | SPI Master 및 Slave FPGA 보드 핀 할당 |
+| `i2c/rtl/master/axi` | MicroBlaze 시스템에서 사용하는 AXI4-Lite I2C Master IP |
+| `i2c/rtl/master/standalone` | AXI 없이 동작하는 독립형 I2C Master |
+| `i2c/rtl/slave` | I2C Slave 및 Slave 보드 출력 모듈 |
+| `i2c/rtl/integration` | I2C Master–Slave 통합 및 보드 시연 모듈 |
+| `i2c/sim` | I2C Master–Slave 통신 Testbench |
+| `i2c/software` | MicroBlaze에서 I2C IP를 제어하는 C 소프트웨어 |
+| `i2c/constraints` | I2C Master 및 Slave FPGA 보드 핀 할당 |
+
+> Vivado와 Vitis에서 자동 생성되는 `.cache`, `.gen`, `.runs`, `.sim`, `.hw`, `.Xil`, `Debug`, `Release` 디렉터리는 소스코드에서 제외했습니다.
 
 ---
 
