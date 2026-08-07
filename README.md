@@ -209,12 +209,12 @@ AXI Slave 내부 Register Map을 통해 SPI와 I2C의 제어 명령, 송신 데�
 
 ---
 
-## 📊 검증 결과
+## 📊 검증 결과 및 시연 영상
 
 ### SPI UVM 검증
 
 <p align="center">
-  <img src="images/spi_uvm_result.png" width="850">
+  <img src="./images/spi_uvm_result.png" width="850">
 </p>
 
 <p align="center">
@@ -227,63 +227,76 @@ Passed             : 1000
 Failed             : 0
 ```
 
-1000개의 무작위 Transaction에 대해 Master 송신 데이터와 Slave 수신 데이터를  
-Scoreboard로 비교한 결과, 모든 Transaction이 정상적으로 일치했습니다.
+1000개의 무작위 Transaction에 대해 Master 송신 데이터와 Slave 수신 데이터를 Scoreboard로 비교했습니다.
+
+검증 결과, 모든 Transaction의 송수신 데이터가 정상적으로 일치했으며 오류 없이 테스트를 통과했습니다.
 
 ---
 
 ### I2C 정상 수신 결과
 
 <p align="center">
-  <img src="images/i2c_rx_waveform.png" width="850">
+  <img src="./images/i2c_rx_waveform.png" width="850">
 </p>
 
 <p align="center">
   <b>Polling 동기화 적용 후 I2C 정상 수신 파형</b>
 </p>
 
-Status Register의 Done bit를 Polling 방식으로 확인한 뒤 RX Register에 접근하도록 수정했습니다.  
-그 결과 수신 데이터 누락 없이 정상적으로 데이터가 전달되는 것을 확인했습니다.
+Status Register의 Done bit를 Polling 방식으로 확인한 뒤 RX Register에 접근하도록 수정했습니다.
+
+그 결과 Master와 Slave 사이에서 수신 데이터가 누락되지 않고 정상적으로 전달되는 것을 확인했습니다.
 
 ---
 
-### Board-to-Board 양방향 통신 검증
+### FPGA Board-to-Board 양방향 통신
+
+FPGA 보드 2대를 각각 Master와 Slave로 구성하여 SPI와 I2C의 양방향 데이터 통신을 검증했습니다.
+
+아래 이미지를 클릭하면 해당 유튜브 시연 영상을 확인할 수 있습니다.
+
+<table width="100%">
+  <tr>
+    <th width="50%">SPI 양방향 통신</th>
+    <th width="50%">I2C 양방향 통신</th>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <a href="https://youtube.com/shorts/EK3bsT46Yc8?si=0MAaoFSzWhrUqAVD">
+        <img src="./images/spi_bidirectional_demo.png" width="100%">
+      </a>
+    </td>
+    <td align="center" width="50%">
+      <a href="https://youtube.com/shorts/zArPqDLJFbw?si=ILVaSu_74qTrLThy">
+        <img src="./images/i2c_bidirectional_demo.png" width="100%">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Master가 MOSI를 통해 데이터를 전송하고, Slave가 MISO를 통해 응답 데이터를 반환하는 양방향 통신을 검증했습니다.
+    </td>
+    <td>
+      Master Write를 통한 데이터 전송과 Master Read를 통한 응답 데이터 수신 동작을 검증했습니다.
+    </td>
+  </tr>
+</table>
+
+<p align="center">
+  <i>이미지를 클릭하면 유튜브에서 시연 영상을 확인할 수 있습니다.</i>
+</p>
+
+### Board-to-Board 검증 내용
 
 - FPGA 보드 2대를 각각 Master와 Slave로 구성
-- SPI의 MOSI/MISO를 이용한 양방향 데이터 송수신 검증
-- I2C Master Write 및 Master Read 동작 검증
+- SPI MOSI/MISO 기반 양방향 데이터 송수신 확인
+- I2C Master Write 및 Master Read 동작 확인
 - Master에서 Slave로 전달된 데이터 확인
 - Slave에서 Master로 반환된 응답 데이터 확인
 - 각 보드의 송신 데이터와 수신 데이터 일치 여부 확인
 - 반복 통신 환경에서 안정적인 데이터 전달 확인
-  
+- 
 ---
-
-## 🎥 시연 영상
-
-### SPI 양방향 Board-to-Board 통신
-
-FPGA 보드 2대를 SPI Master와 Slave로 구성하여 양방향 데이터 통신을 검증했습니다.
-
-Master가 MOSI를 통해 Slave로 데이터를 전송하고,  
-Slave는 MISO를 통해 응답 데이터를 Master로 반환합니다.  
-각 보드의 출력 장치를 통해 송신 데이터와 수신 데이터가 일치하는지 확인했습니다.
-
-https://github.com/user-attachments/assets/https://github.com/user-attachments/assets/2ad1a2e3-ec8b-465f-a355-9dd903ed0ff9
-
-### I2C 양방향 Board-to-Board 통신
-
-FPGA 보드 2대를 I2C Master와 Slave로 구성하여  
-Master Write와 Master Read를 이용한 양방향 데이터 통신을 검증했습니다.
-
-Master Write 과정에서는 Master의 데이터를 Slave로 전달하고,  
-Master Read 과정에서는 Slave의 데이터를 Master가 읽어옵니다.  
-각 보드의 출력 장치를 통해 양방향으로 전달된 데이터가 일치하는지 확인했습니다.
-
-https://github.com/user-attachments/assets/https://github.com/user-attachments/assets/92001c28-2abe-4adc-a710-84242fc8d082
-
----
-
 
 ## 📂 프로젝트 구조
 
